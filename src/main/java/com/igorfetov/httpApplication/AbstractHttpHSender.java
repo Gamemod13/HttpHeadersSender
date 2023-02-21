@@ -8,8 +8,7 @@ public abstract class AbstractHttpHSender implements HttpHeadersSender{
     private HttpURLConnection connection;
 
     AbstractHttpHSender(String httpPath) throws IOException {
-        URL url = new URL(httpPath);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) new URL(httpPath).openConnection();
     }
     public abstract void sendGetRequest();
     public abstract void sendHeadRequest();
