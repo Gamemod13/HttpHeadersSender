@@ -1,88 +1,182 @@
 package com.igorfetov.httpApplication;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public abstract class AbstractHttpHSender implements HttpHeadersSender{
-    private HttpURLConnection connection;
+/**
+ * Abstract implementation of <b>HTTP Sender</b>
+ * Create new HTTP URL Connection, create map of Headers.
+ * Implement requests ''''''''
+ */
+public abstract class AbstractHttpHSender implements HttpHeadersSender {
+    private final HttpURLConnection connection;
+    private Map<String, String> headers = setUpHeaders();
 
+    public static Map<String, String> emptyHeaders(){
+        return new LinkedHashMap<>() {{
+            put("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+            put("accept-encoding", "gzip, deflate, br");
+            put("accept-language"," ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+            put("cache-control", "max-age=0");
+            put("sec-ch-ua","\"Chromium\";v=\"110\", \"Not A(Brand\";v=\"24\", \"Google Chrome\";v=\"110\"");
+            put("sec-ch-ua-mobile","?0");
+            put("sec-ch-ua-platform","\"Windows\"");
+            put("sec-fetch-dest","document");
+            put("sec-fetch-mode","navigate");
+            put("sec-fetch-site","same-origin");
+            put("sec-fetch-user","?1");
+            put("upgrade-insecure-requests","1");
+            put("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36");
+            /*
+
+            sec-ch-ua: "Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110"
+            sec-ch-ua-mobile: ?0
+            sec-ch-ua-platform: "Windows"
+            sec-fetch-dest: document
+            sec-fetch-mode: navigate
+            sec-fetch-site: same-origin
+            sec-fetch-user: ?1
+            upgrade-insecure-requests: 1
+            user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+            put("Accept", "value");
+            put("Accept-Charset", "value");
+            put("Accept-Language", "value");
+            put("Allow", "value");
+            put("Content-Encoding", "value");
+            put("Content-Language", "value");
+            put("Content-Location", "value");
+            put("Content-Type", "value");
+            put("Date", "value");
+            put("Expect", "value");
+            put("From", "value");
+            put("Location", "value");
+            put("Max-Forwards", "value");
+            put("MIME-Version", "value");
+            put("Referer", "value");
+            put("Retry-After", "value");
+            put("Server", "value");
+            put("User-Agent", "value");
+            put("Vary", "value");
+
+             */
+        }};
+    }
+
+    /**
+     *
+     * @param httpPath
+     * @throws IOException
+     */
     AbstractHttpHSender(String httpPath) throws IOException {
         URL url = new URL(httpPath);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    }
-    private void sendHeaders() throws ProtocolException {
-        Map<String, String> headers = Map.of(
-                "Accept", "value",
-                "Accept-Charset", "value",
-                "Accept-Language", "value",
-                "Allow", "value",
-                "Content-Encoding", "value",
-                "Content-Language", "value",
-                "Content-Location", "value",
-                "Content-Type", "value",
-                "Date", "value",
-                "Expect", "value",
-                "From", "value",
-                "Location", "value",
-                "Max-Forwards", "value",
-                "MIME-Version", "value",
-                "Referer", "value",
-                /*
-                 Accept            | http     | standard | Section 5.3.2   |
-   | Accept-Charset    | http     | standard | Section 5.3.3   |
-   | Accept-Encoding   | http     | standard | Section 5.3.4   |
-   | Accept-Language   | http     | standard | Section 5.3.5   |
-   | Allow             | http     | standard | Section 7.4.1   |
-   | Content-Encoding  | http     | standard | Section 3.1.2.2 |
-   | Content-Language  | http     | standard | Section 3.1.3.2 |
-   | Content-Location  | http     | standard | Section 3.1.4.2 |
-   | Content-Type      | http     | standard | Section 3.1.1.5 |
-   | Date              | http     | standard | Section 7.1.1.2 |
-   | Expect            | http     | standard | Section 5.1.1   |
-   | From              | http     | standard | Section 5.5.1   |
-   | Location          | http     | standard | Section 7.1.2   |
-   | Max-Forwards      | http     | standard | Section 5.1.2   |
-   | MIME-Version      | http     | standard | Appendix A.1    |
-   | Referer           | http     | standard | Section 5.5.2   |
-   | Retry-After       | http     | standard | Section 7.1.3   |
-   | Server            | http     | standard | Section 7.4.2   |
-   | User-Agent        | http     | standard | Section 5.5.3   |
-   | Vary
-                 */
-        );
-        connection.setRequestProperty();
-    }
-    public void sendGetRequest() throws ProtocolException {
-        connection.setRequestMethod("GET");
-    };
-    public abstract void sendHeadRequest(){
+        connection = (HttpURLConnection) url.openConnection();
+        assert connection != null;
     }
 
-    public abstract void sendPostRequest(){
-        connection.setRequestMethod("GET");
+    /**
+     *
+     */
+    protected Map<String,String> setUpHeaders() {
+        return emptyHeaders();
     }
-    public abstract void sendPutRequest(){
-        connection.setRequestMethod("GET");
+
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
+    private int getResponseCode() throws IOException {
+        return connection.getResponseCode();
     }
-    public abstract void sendDeleteRequest(){
-        connection.setRequestMethod("GET");
+
+    /**
+     *
+     */
+    private void sendHeaders() {
+        assert headers != null;
+        headers.forEach(connection::setRequestProperty);
     }
-    public abstract void sendConnectRequest(){
+
+    /**
+     *
+     * @throws IOException
+     */
+    public void sendGetRequest() throws IOException {
         connection.setRequestMethod("GET");
+        sendHeaders();
+        System.out.println(getResponseCode());
     }
-    public abstract void sendOptionsRequest(){
-        connection.setRequestMethod("GET");
+
+    /**
+     *
+     * @throws IOException
+     */
+    public void sendPostRequest() throws IOException {
+        connection.setRequestMethod("POST");
+        sendHeaders();
+        System.out.println(getResponseCode());
     }
-    public abstract void sendTraceRequest(){
-        connection.setRequestMethod("GET");
+
+    /**
+     *
+     * @throws IOException
+     */
+    public  void sendPutRequest() throws IOException {
+        connection.setRequestMethod("PUT");
+        sendHeaders();
+        System.out.println(getResponseCode());
     }
-    public abstract void sendPatchRequest(){
-        connection.setRequestMethod("GET");
+
+    /**
+     *
+     * @throws IOException
+     */
+    public  void sendDeleteRequest() throws IOException {
+        connection.setRequestMethod("DELETE");
+        sendHeaders();
+        System.out.println(getResponseCode());
     }
+
+    /**
+     *
+     * @throws IOException
+     */
+    public void sendConnectRequest() throws IOException {
+        connection.setRequestMethod("CONNECT");
+        sendHeaders();
+        System.out.println(getResponseCode());
+    }
+
+    /**
+     *
+     * @throws IOException
+     */
+    public void sendOptionsRequest() throws IOException {
+        connection.setRequestMethod("OPTIONS");
+        sendHeaders();
+        System.out.println(getResponseCode());
+    }
+
+    /**
+     *
+     * @throws IOException
+     */
+    public void sendTraceRequest() throws IOException {
+        connection.setRequestMethod("TRACE");
+        sendHeaders();
+        System.out.println(getResponseCode());
+    }
+
+    /**
+     *
+     * @throws IOException
+     */
+    public void sendPatchRequest() throws IOException {
+        connection.setRequestMethod("PATCH");
+        sendHeaders();
+        System.out.println(getResponseCode());
+    }
+
 }
