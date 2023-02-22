@@ -1,9 +1,11 @@
 package com.igorfetov.httpApplication;
 
+import java.net.ProtocolException;
+
 //TODO: Create an interface of header request library.
 public interface HttpHeadersSender {
 
-    void sendGetRequest();
+    void sendGetRequest() throws ProtocolException;
     void sendHeadRequest();
     void sendPostRequest();
     void sendPutRequest();

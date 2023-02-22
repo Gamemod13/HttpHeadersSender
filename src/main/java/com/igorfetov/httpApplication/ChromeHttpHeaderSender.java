@@ -1,10 +1,7 @@
 package com.igorfetov.httpApplication;
 
-import javax.print.DocFlavor;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 
 public class ChromeHttpHeaderSender extends AbstractHttpHSender {
 
